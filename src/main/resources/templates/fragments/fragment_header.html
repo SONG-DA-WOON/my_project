@@ -1,0 +1,192 @@
+<!-- 분류 main: 배경색상(메인) | sub: back,title, 배경색상(흰색)-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+
+<header id="header" th:fragment="header" class="main">
+    <div class="banner-wrap" id="bannerMenu">
+        <div class="w-set">
+            <div th:if="${lineBanner != null}">
+                <a class="banner-top" th:href="${lineBanner.link}"
+                   th:target="${lineBanner.target.target}">
+                    <p class="txt" th:text="${lineBanner.title}">라인베너</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="banner-menu">
+            <div class="checkbox type-black hide-m">
+                <input type="checkbox" id="bannerCloseDay"/>
+                <label for="bannerCloseDay">오늘 하루 보지 않기</label>
+            </div>
+            <button type="button" id="btnClose" class="btn-close">닫기</button>
+        </div>
+    </div>
+
+    <div class="inner">
+        <div class="hd-top">
+            <h1 class="hd-logo">
+                <a href="/" class="logo-link">
+                    <span class="is-blind">스틸링크</span>
+                </a>
+            </h1>
+            <div class="gnb-wrap">
+                <ul class="gnb">
+                    <li>
+                        <a href="/buyer/step1">견적문의<span class="tag">구매자</span></a>
+                    </li>
+                    <li>
+                        <a href="/bid/list">견적참여<span class="tag">판매자</span></a>
+                    </li>
+                    <li>
+                        <a href="/freeMarket/list">프리마켓</a>
+                    </li>
+                    <li>
+                        <a href="/steel/price">스틸 ON <i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="/steel/price">품목별 실시간 유통가격</a>
+                            </li>
+                            <li>
+                                <a href="/steel/maker">메이커 비규격품 공유</a>
+                            </li>
+                            <li>
+                                <a href="/steel/calculate">철강 계산기</a>
+                            </li>
+                            <li>
+                                <a href="/steel/archive">철강 자료실</a>
+                            </li>
+                            <li>
+                                <a href="/steel/partners">파트너스</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">이용안내 <i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="javascript:void(0)">서비스 소개</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">구매 이용안내</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">판매 이용안내</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">회사소개</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="hd-utils">
+                <ul>
+                    <!-- 클릭 시 input-wrap에 on 클래스 추가 -->
+                    <li class="is-search hide-m">
+                        <form id="searchForm" action="/search/result" onsubmit="return handleSubmit(event)">
+                            <button class="btn-search" type="submit">검색</button>
+                            <div class="input-wrap">
+                                <input type="text" name="search" id="search" placeholder="어떤 제품이 필요하세요?">
+                                <label for="search" class="is-blind">검색</label>
+                            </div>
+                        </form>
+                    </li>
+                    <!-- 로그인 전 -->
+                    <th:block sec:authorize="isAnonymous()">
+                        <li class="hide-t">
+                            <a href="/login" class="btn-txt">로그인</a>
+                        </li>
+                        <li class="hide-t">
+                            <a href="/join" class="btn-txt">회원가입</a>
+                        </li>
+                    </th:block>
+
+                    <!-- 로그인 후 -->
+
+                    <th:block sec:authorize="!isAnonymous()">
+                        <!-- 견적, 알림 있을 경우 a태그에 on 클래스 추가 -->
+                        <li class="is-receive hide-m">
+                            <a href="/mypage/progress/buyer" class="btn-txt" id="estimate">받은 견적</a>
+                        </li>
+                        <li class="is-notification">
+                            <a href="/mypage/notificationList" class="link on">알림</a>
+                        </li>
+                        <!-- 모바일에서만 존재(찜 담았을 경우 a태그에 on 클래스 추가) -->
+                        <li class="is-wish hide-pc">
+                            <a href="/mypage/wish" class="link" id="jJim">찜</a>
+                        </li>
+                        <!-- 장바구니 담겨 있을 경우 a태그에 on클래스 추가 -->
+                        <li class="is-cart hide-m">
+                            <a href="/mypage/cart" class="btn-cart on">장바구니<span class="count" id="cartCountTag">38</span></a>
+                        </li>
+                    </th:block>
+                    <li class="is-menu hide-m">
+                        <button type="button" class="btn-menu" id="open">전체메뉴</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        // 햄버거 클릭 시 api 호출 후 포인트 넣기
+        if (document.getElementById('open') != null) {
+            document.getElementById('open').addEventListener('click', function () {
+
+                let memPointElement = document.getElementById('memPoint');
+
+                fetch("/api/getMemberPoint")
+                    .then(response => response.json())
+                    .then(data => {
+                        const formattedPoints = Number(data).toLocaleString();
+                        memPointElement.innerText = formattedPoints + 'P';
+                    });
+            });
+        }
+
+        // 찜 여부 불빛 조절
+        document.addEventListener("DOMContentLoaded", async function () {
+            let jJimEl = document.getElementById("jJim");
+
+            try {
+                const response = await fetch("/api/estimateSetJjim/count");
+
+                const isEstimateSetJjimCountZero = await response.json();
+
+                console.log(isEstimateSetJjimCountZero);
+
+                if (isEstimateSetJjimCountZero) {
+                    jJimEl.classList.add('on');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        // 받은 견적 불빛 여부
+        document.addEventListener("DOMContentLoaded", async function () {
+            let estimateEl = document.getElementById("estimate");
+
+            try {
+                const response = await fetch("/api/estimateSet/count");
+
+                const isEstimateSetCountZero = await response.json();
+
+                console.log(isEstimateSetCountZero);
+
+                if (isEstimateSetCountZero) {
+                    estimateEl.classList.add('on');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+
+
+    </script>
+</header>
+</html>

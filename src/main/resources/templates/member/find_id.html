@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/layout_sub}">
+
+<main id="contents" layout:fragment="contents">
+    <div class="sub-content">
+        <div class="member-wrap">
+            <div class="login-wrap">
+                <div class="w-set2">
+                    <div class="tit-area hide-m">
+                        <h2 class="tit">아이디 찾기</h2>
+                    </div>
+                    <div class="tab-list">
+                        <a href="/find/id" class="on">아이디 찾기</a>
+                        <a href="/find/password">비밀번호 찾기</a>
+                    </div>
+                    <form action="">
+                        <div class="input-wrap">
+                            <!-- 아이디 정보가 없을 때 -->
+                            <div class="empty" id="empty-message" style="display: none;">
+                                <p>작성하신 정보와 일치하는 계정이<br /> 존재하지 않습니다.</p>
+                            </div>
+
+                            <!-- 아이디 찾기 결과 -->
+                            <div class="result" id="result-message" style="display: none;">
+                                <p>
+                                    요청하신 아이디는 <br />
+                                    <span id="found-id"></span> 입니다.
+                                </p>
+                            </div>
+                            <div class="input-item">
+                                <input type="text" name="userName" id="userName" placeholder="이름">
+                                <label for="userName" class="is-blind">이름</label>
+                                <!-- <p class="error-txt">이름을 입력해주세요.</p> -->
+                            </div>
+                            <div class="input-item">
+                                <input type="text" name="phoneNo" id="phoneNo" placeholder="휴대폰 번호">
+                                <label for="phoneNo" class="is-blind">휴대폰 번호</label>
+                                <!-- <p class="error-txt">휴대폰 번호는 10자~11자로 입력해주세요.</p> -->
+                            </div>
+                        </div>
+                        <div class="btn-wrap">
+                            <!-- 활성화시 is-disabled 클래스 삭제 -->
+                            <button type="button" id="findIdBtn" class="btn color2" onclick="findId()">아이디 찾기</button>
+                        </div>
+                        <div class="btn-wrap" id="joinBtn" style="display: none">
+                            <button type="button" onclick="goToJoin()" class="btn color2">회원가입 하기</button>
+                        </div>
+                        <div class="btn-wrap" id="loginBtn" style="display: none">
+                            <button type="button" onclick="goToLogin()" class="btn color2">로그인 이동</button>
+                        </div>
+                    </form>
+                    <div class="bottom-menu">
+                        <div class="go-link">
+                            <a href="/login" class="link">로그인 하기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script layout:fragment="script">
+    //서브 페이지 제목
+    var hdNm = "아이디 찾기";
+
+    // input validition - outline
+    const userName = document.querySelector('input[id="userName"]');
+    const phoneNo = document.querySelector('input[name="phoneNo"]');
+    $('.btn-wrap .btn').on('click', function () {
+        if (userName.value === '') {
+            $(userName).parent('.input-item').addClass('empty-item');
+        }
+        if (phoneNo.value === '') {
+            $(phoneNo).parent('.input-item').addClass('empty-item');
+        }
+    });
+
+    // 아이디 찾기 클릭
+    function findId() {
+        let memName = document.getElementById("userName").value;
+        let phoneNo = document.getElementById("phoneNo").value;
+
+        removeErrorMessages();
+
+        let hasError = false;
+
+        // 입력 값 검증
+        if (memName.trim() === "") {
+            showError("이름을 입력해주세요.", "userName");
+            hasError = true;
+        }
+
+        if (phoneNo.trim() === "") {
+            showError("휴대폰 번호를 입력해주세요.", "phoneNo");
+            hasError = true;
+        } else if (phoneNo.length < 10 || phoneNo.length > 11) {
+            showError("휴대폰 번호는 10자~11자로 입력해주세요.", "phoneNo");
+            hasError = true;
+        }
+
+        if (hasError) {
+            return false; // 에러가 있을 경우 함수 종료
+        }
+        let emptyMessage = document.getElementById("empty-message");
+        let resultMessage = document.getElementById("result-message");
+        let foundIdSpan = document.getElementById("found-id");
+        fetch("/api/find/id", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ memName: memName, phoneNo: phoneNo })
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result);
+                if (result.data.code === 200) {
+                    // 정보가 있을 때
+                    document.querySelectorAll(".input-item").forEach(item => {
+                        item.style.display = 'none';
+                    });
+                    document.getElementById("findIdBtn").style.display = 'none';
+                    document.getElementById("loginBtn").style.display = '';
+
+                    const ids = result.data.data; // 데이터가 배열이라고 가정
+                    foundIdSpan.innerHTML = ''; // 기존 내용 초기화
+
+                    ids.forEach(id => {
+                        const spanElement = document.createElement("span");
+                        spanElement.textContent = id.loginId;
+                        spanElement.style.display = 'block'; // 각 span을 블록 형식으로 표시
+                        foundIdSpan.appendChild(spanElement);
+                    });
+
+                    resultMessage.style.display = "block";
+                    emptyMessage.style.display = "none";
+                } else {
+                    // 정보가 없을 때
+                    document.querySelectorAll(".input-item").forEach(item => {
+                        item.style.display = 'none';
+                    });
+                    document.getElementById("findIdBtn").style.display = 'none';
+                    document.getElementById("joinBtn").style.display = '';
+                    resultMessage.style.display = "none";
+                    emptyMessage.style.display = "block";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // 에러 처리
+                resultMessage.style.display = "none";
+                emptyMessage.style.display = "block";
+            });
+
+
+    }
+
+    // 에러 메시지 태그
+    function showError(message, inputId) {
+        const inputItem = document.getElementById(inputId).parentElement;
+
+        // 에러 메시지 요소 생성
+        const errorElement = document.createElement("p");
+        errorElement.className = "error-txt"; // 클래스 추가
+        errorElement.textContent = message; // 메시지 추가
+        inputItem.appendChild(errorElement); // 입력 필드 아래에 추가
+    }
+
+    // 에러 메시지 태그 삭제
+    function removeErrorMessages() {
+        const errorMessages = document.querySelectorAll(".error-txt");
+        errorMessages.forEach(message => message.remove()); // 기존의 에러 메시지 삭제
+    }
+
+
+    // 회원가입 하러 가기 버튼
+    function goToJoin() {
+        location.href = "/join";
+    }
+
+    // 로그인 이동
+    function goToLogin() {
+        location.href = "/login";
+    }
+</script>
+</html>

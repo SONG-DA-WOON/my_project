@@ -1,0 +1,127 @@
+<!-- 모바일 분류 main: nav O | sub: nav X | member: footer X -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<footer id="footer" th:fragment="footer_sub" class="sub">
+    <div class="w-set">
+        <div class="ft-top">
+            <h1 class="ft-logo">
+                <p class="logo">스틸링크</p>
+            </h1>
+            <ul class="link-list">
+                <li><a href="javascript:;">회사소개</a></li>
+                <li><a href="javascript:;">고객지원</a></li>
+                <li><a href="javascript:;" onclick="$popup.template('#termsPopup')">광고문의</a></li>
+                <li><a href="javascript:;" onclick="$popup.template('#termsPopup')">이용약관</a></li>
+                <li><a href="javascript:;" onclick="$popup.template('#policyPopup')"><b>개인정보처리방침</b></a></li>
+            </ul>
+            <div class="app-list">
+                <a href="#" class="google">구글플레이</a>
+                <a href="javascript:void(0)" class="app">앱스토어</a>
+            </div>
+        </div>
+        <div class="ft-btm">
+            <div class="info-wrap">
+                <p>
+                    <span>(주)여의스틸</span>
+                    <span>대표이사 : 이종웅</span>
+                    <span>사업자등록번호 : 110-86-13223</span>
+                </p>
+                <p>주소 : 서울 영등포구 여의대방로67길 9, 605호</p>
+                <p class="copyright">copyright © 스틸링크</p>
+            </div>
+            <div class="cs-wrap">
+                <p>CS CENTER</p>
+                <P class="c-primary">1800-0982</P>
+                <P>09:00~18:00 (주말 공휴일 휴무)</P>
+            </div>
+        </div>
+    </div>
+    <nav class="footer-nav hide-pc">
+        <div class="inner">
+            <!-- 해당 페이지 일 때 a에 on 클래스 추가 -->
+            <a href="/" class="link">
+                <i class="ft-nav1">홈</i>
+                <span class="txt">홈</span>
+            </a>
+            <a href="/mypage/progress/seller" class="link">
+                <i class="ft-nav2">받은 견적</i>
+                <span class="txt">받은 견적</span>
+            </a>
+            <a href="/search/result?search=" class="link">
+                <i class="ft-nav3">검색</i>
+                <span class="txt">검색</span>
+            </a>
+            <a href="/mypage/cart" class="link">
+                <i class="ft-nav4">장바구니</i>
+                <span class="txt">장바구니</span>
+            </a>
+            <button type="button" class="link btn-menu">
+                <i class="ft-nav5">마이페이지</i>
+                <span class="txt">마이페이지</span>
+            </button>
+        </div>
+    </nav>
+    <div class="quick-wrap">
+
+        <div class="ad-slide hide-m">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+
+                    <div class="swiper-slide" th:each="adBanner : ${adBannerList}">
+                        <div class="img" th:if="${adBanner != null}">
+                            <img th:src="@{/api/file/view/__${adBanner.pcImage.uuid}__?size=1000}" alt="광고 배너" th:target="${adBanner.target.target}" />
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="img">
+<!--                            <img src="javascript:void(0)" alt="광고 배너"/>-->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-menu">
+            <button type="button" class="btn-more hide-pc">퀵메뉴 보기</button>
+            <div class="menu-wrap">
+                <!-- <a href="javascript:void(0)" class="quick1"><p>최근본상품 <span>(3)</span></p></a> -->
+                <a href="/buyer/step1" class="quick2"><p>실시간<br />견적문의</p></a>
+                <a href="javascript:void(0)" class="quick3"><p>이용안내</p></a>
+            </div>
+        </div>
+        <a href="javascript:void(0)" class="btn-chat">채팅상담</a>
+        <button class="go-top">상단으로 가기</button>
+    </div>
+</footer>
+
+<!-- 이용약관 팝업 -->
+<div class="wbz-popup-cont is-template" id="termsPopup">
+    <div class="popup-header">
+        <strong class="popup-title">사용자 이용약관</strong>
+        <button type="button" class="popup-close" onclick="$popup.close();">
+            ✕
+        </button>
+    </div>
+    <div class="popup-cont">
+        <div class="popup-text">약관 내용입니다</div>
+    </div>
+</div>
+<!-- //이용약관 팝업 -->
+
+<!-- 개인정보처리방침 팝업 -->
+<div class="wbz-popup-cont is-template" id="policyPopup">
+    <div class="popup-header">
+        <strong class="popup-title">개인정보처리방침</strong>
+        <button type="button" class="popup-close" onclick="$popup.close();">
+            ✕
+        </button>
+    </div>
+    <div class="popup-cont">
+        <div class="popup-text">약관 내용입니다</div>
+    </div>
+</div>
+<!-- //개인정보처리방침 팝업 -->
+</html>

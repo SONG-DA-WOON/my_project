@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/layout_sub}">
+
+<main id="contents" layout:fragment="contents">
+    <div class="sub-content">
+        <div class="member-wrap">
+            <div class="login-wrap">
+                <div class="w-set2">
+                    <div class="tit-area">
+                        <div class="logo">
+                            <span class="is-blind">스틸링크</span>
+                        </div>
+                    </div>
+                    <form action="/login" method="POST">
+                        <div class="input-wrap">
+                            <div class="input-item">
+                                <input type="text" name="username" id="username" placeholder="아이디를 입력해주세요">
+                                <label for="username" class="is-blind">아이디를 입력해주세요</label>
+                                <p class="error-txt" style="display:none;">아이디를 입력해주세요.</p>
+                            </div>
+                            <div class="input-item">
+                                <input type="password" name="password" id="password" placeholder="비밀번호를 입력해주세요">
+                                <label for="password" class="is-blind">비밀번호를 입력해주세요</label>
+                                <p class="error-txt" style="display:none;">비밀번호를 입력해주세요.</p>
+                            </div>
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" name="rememberMe" id="rememberMe" value="Y">
+                            <label for="rememberMe">자동 로그인</label>
+                        </div>
+                        <div class="btn-wrap">
+                            <button type="submit" class="btn color2">로그인</button>
+                        </div>
+                        <!-- 서버에서 받은 에러 메시지 표시 -->
+                        <p id="serverErrorMessage" class="error-txt" style="display:none;"></p>
+                    </form>
+
+                    <div class="bottom-menu">
+                        <div class="btn-wrap type-center">
+                            <a href="/find/id" class="link">아이디 찾기</a>
+                            <span class="line"></span>
+                            <a href="/find/password" class="link">비밀번호 찾기</a>
+                        </div>
+                        <div class="go-link">
+                            <p>아직 스틸링크의 회원이 아니시라면?</p>
+                            <a href="/join" class="link">회원가입하기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script layout:fragment="script" th:inline="javascript">
+    //서브 페이지 제목
+    var hdNm = "로그인";
+
+    // input validition - outline
+    const userId = document.querySelector('input[id="username"]');
+    const userPw = document.querySelector('input[name="password"]');
+    const serverErrorMessage = document.getElementById('serverErrorMessage');
+
+    // 서버에서 전달된 에러 메시지를 처리 (만약 errorMessage가 있다면 표시)
+    let errorMessage = /*[[${errorMessage}]]*/'';
+    if (errorMessage !== '') {
+        serverErrorMessage.textContent = errorMessage;
+        serverErrorMessage.style.display = 'block';
+    } else {
+        serverErrorMessage.style.display = 'none';
+    }
+
+    $('.btn-wrap .btn').on('click', function (event) {
+        let isValid = true;
+
+        // 아이디가 비어 있을 경우 처리
+        if (userId.value === '') {
+            $(userId).parent('.input-item').addClass('empty-item');
+            $(userId).siblings('.error-txt').show(); // 에러 메시지 노출
+            isValid = false;
+        } else {
+            $(userId).parent('.input-item').removeClass('empty-item');
+            $(userId).siblings('.error-txt').hide(); // 에러 메시지 숨김
+        }
+
+        // 비밀번호가 비어 있을 경우 처리
+        if (userPw.value === '') {
+            $(userPw).parent('.input-item').addClass('empty-item');
+            $(userPw).siblings('.error-txt').show(); // 에러 메시지 노출
+            isValid = false;
+        } else {
+            $(userPw).parent('.input-item').removeClass('empty-item');
+            $(userPw).siblings('.error-txt').hide(); // 에러 메시지 숨김
+        }
+
+        // 폼이 유효하지 않으면 제출 방지
+        if (!isValid) {
+            event.preventDefault(); // form submit 막기
+        }
+    });
+</script>
+</html>

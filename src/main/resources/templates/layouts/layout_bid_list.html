@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="~{fragments/fragment_head :: head}"></head>
+
+<body>
+<!-- 본문 바로가기 -->
+<div id="skipNav">
+    <a href="#contents" onclick="document.getElementById('contents').tabIndex = -1;
+    document.getElementById('contents').focus();return false;">본문 바로가기</a>
+</div>
+<div id="container">
+    <!-- Header Start-->
+    <header th:replace="~{fragments/fragment_header_sub :: header_sub}"></header>
+    <!-- //Header End-->
+
+    <!-- Aside-->
+    <aside th:replace="~{fragments/fragment_aside :: aside}"></aside>
+    <!-- //Aside End -->
+
+    <!-- Contents -->
+    <main id="contents" layout:fragment="contents"></main>
+    <!-- //Contents End-->
+
+    <!-- Footer Start-->
+    <footer th:replace="~{fragments/fragment_footer_sub :: footer_sub}"></footer>
+    <!-- //Footer End-->
+</div>
+<script>
+    // 쿠키 설정 함수
+    function setCookie(name, value, days) {
+        debugger
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    // 쿠키 가져오기 함수
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // 배너 초기화 함수
+    function initializeBanner() {
+        var bannerMenu = document.getElementById("bannerMenu");
+        var bannerCloseDayCheckbox = document.getElementById("bannerCloseDay");
+        var btnClose = document.getElementById("btnClose");
+
+        // 페이지 로드 시 쿠키 확인
+        if (getCookie("bannerClosed") === "true") {
+            bannerMenu.style.display = "none";
+        } else {
+            bannerMenu.style.display = "";
+        }
+
+        // 닫기 버튼 클릭 시 배너 숨기기
+        btnClose.addEventListener("click", function () {
+            if (bannerCloseDayCheckbox.checked) {
+                setCookie("bannerClosed", "true", 1); // 1일 동안 쿠키 저장
+            }
+            bannerMenu.style.display = "none";
+        });
+    }
+
+    // 페이지 로드 시 배너 초기화 함수 호출
+    document.addEventListener("DOMContentLoaded", function () {
+        initializeBanner();
+        getCartCount();
+        document.getElementById('search').addEventListener('keypress', handleKeyPress);
+
+    });
+    function getCartCount() {
+        fetch("/api/cart/count", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(result => {
+                if(document.getElementById("cartCountTag") != null) {
+                    document.getElementById("cartCountTag").textContent = result.data.data
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching cart count:", error);
+            });
+    }
+
+    // 검색 함수
+    function handleSubmit(event) {
+        if (event) {
+            event.preventDefault(); // 기본 폼 제출 방지
+        }
+
+        const inputWrap = document.querySelector('.input-wrap');
+
+        if (inputWrap.classList.contains('on')) {
+            document.getElementById('searchForm').submit();
+        } else {
+            inputWrap.classList.add('on');
+            document.getElementById('search').focus();
+            return false; // 제출 방지
+        }
+    }
+
+    // 엔터 키를 눌렀을 때 검색 함수 호출
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            handleSubmit(event); // 이벤트를 인자로 전달
+        }
+    }
+</script>
+<script layout:fragment="script">
+</script>
+</body>
+</html>

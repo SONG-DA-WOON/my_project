@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <title>-</title>
+</head>
+
+<body>
+<main layout:fragment="contents">
+
+    <div class="main-content">
+        <div class="main-visual">
+            <div class="swiper-control">
+                <div class="swiper-count">
+                    <span class="active-num"></span>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-count">
+                    <span class="all-num"></span>
+                </div>
+                <a href="javascript:;" class="pause">정지</a>
+                <a href="javascript:;" class="play">재생</a>
+            </div>
+            <div class="swiper-navi">
+                <button type="button" class="swiper-button prev">이전</button>
+                <button type="button" class="swiper-button next">다음</button>
+            </div>
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <a href="#" class="img">
+                            <img src="/user/images/common/img/myLogo.png" alt="" class="for-pc">
+                            <img src="/user/images/common/img/myLogo.png" alt="" class="for-m">
+                        </a>
+                    </div>
+                    <div class="swiper-slide">
+                        <a href="#" class="img">
+                            <img src="/user/images/common/img/myLogo.png" alt="" class="for-pc">
+                            <img src="/user/images/common/img/myLogo.png" alt="" class="for-m">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-set">
+            <div class="main-cont">
+                <div class="intro-category">
+                    <div class="intro-category-list">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
+</body>
+</html>

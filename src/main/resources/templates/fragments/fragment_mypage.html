@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<div class="divide-left" th:fragment="mypage">
+    <div class="member-info">
+        <div class="profile-wrap">
+            <div class="profile">
+                <!-- 등록된 사진 없을 때 -->
+                <th:block th:if="${#authentication.principal.profileImg eq null}">
+                    <img src="/images/common/img/no_profile.svg" alt="프로필">
+                </th:block>
+                <!-- 등록된 사진 있을 때 -->
+                <th:block th:unless="${#authentication.principal.profileImg eq null}">
+                    <img th:src="@{/api/file/view/{uuid}(uuid=${#authentication.principal.profileImg}, size=150)}" alt="프로필">
+                </th:block>
+            </div>
+            <p class="name"><th:block th:text="${member.company}"></th:block><span>님</span></p>
+            <p class="sub-date" th:text="${#temporals.format(member.regDt, 'yy년 MM월 dd일') + ' 가입'}">24년 6월 7일 가입</p>
+        </div>
+        <div class="point-wrap">
+            <p>보유POINT</p>
+            <p class="point c-primary" id="mypageMemPoint">0<span>P</span></p>
+        </div>
+    </div>
+    <div class="left-menu">
+        <!-- 해당 메뉴 a태그에 on 클래스 추가 -->
+        <ul class="menu-wrap">
+            <li>
+                <p class="menu-tit">진행 중인 거래</p>
+                <ul class="depth2">
+                    <li>
+                        <a href="/mypage/progress/buyer" th:classappend="${#strings.equals(requestURI, '/mypage/progress/buyer') ? 'on' : ''}">견적문의</a>
+                    </li>
+                    <li>
+                        <a href="/mypage/progress/seller" th:classappend="${#strings.equals(requestURI, '/mypage/progress/seller') ? 'on' : ''}">견적참여</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p class="menu-tit">완료된 거래</p>
+                <ul class="depth2">
+                    <li>
+                        <a href="/mypage/completed/buyer" th:classappend="${#strings.equals(requestURI, '/mypage/completed/buyer') ? 'on' : ''}">견적문의</a>
+                    </li>
+                    <li>
+                        <a href="/mypage/completed/seller" th:classappend="${#strings.equals(requestURI, '/mypage/completed/seller') ? 'on' : ''}">견적참여</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p class="menu-tit">프리마켓</p>
+                <ul class="depth2">
+                    <li>
+                        <a href="/mypage/freeMarket/sale" th:classappend="${#strings.equals(requestURI, '/mypage/freeMarket/sale') ? 'on' : ''}">판매 내역</a>
+                    </li>
+                    <li>
+                        <a href="/mypage/freeMarket/complete" th:classappend="${#strings.equals(requestURI, '/mypage/freeMarket/complete') ? 'on' : ''}">거래완료</a>
+                    </li>
+                    <li>
+                        <a href="/mypage/freeMarket/buy" th:classappend="${#strings.equals(requestURI, '/mypage/freeMarket/buy') ? 'on' : ''}">구매 내역</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="/mypage/wish">찜 리스트</a>
+            </li>
+            <li>
+                <a href="/mypage/alarm">알림 설정</a>
+            </li>
+            <li>
+                <a href="/mypage/point">포인트</a>
+            </li>
+        </ul>
+    </div>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            let pathName = window.location.pathname
+
+            if (pathName.includes('mypage')) {
+
+                let mypageMemPointElement = document.getElementById('mypageMemPoint');
+
+                fetch("/api/getMemberPoint")
+                    .then(response => response.json())
+                    .then(data => {
+                        const formattedPoints = Number(data).toLocaleString();
+                        mypageMemPointElement.innerText = formattedPoints + 'P';
+                    });
+
+            }
+        })
+    </script>
+</div>
+

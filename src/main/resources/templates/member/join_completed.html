@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/layout_sub}">
+
+<main id="contents" layout:fragment="contents">
+    <div class="sub-content" style="background-color: #EEF5FF;">
+        <div class="member-wrap">
+            <div class="join-wrap completed-wrap">
+                <div class="w-set">
+                    <div class="tit-area hide-m">
+                        <h2 class="tit">회원가입</h2>
+                    </div>
+                    <div class="completed-area">
+                        <div class="txt-area">
+                            <div class="completed-txt">
+                                <p class="txt01">회원가입이 <br class="hide-pc">정상적으로 완료 되었습니다.</p>
+                                <p class="txt02">승인 후 로그인 하시면 <br class="hide-pc">정상적인 서비스 이용이 가능합니다.</p>
+                            </div>
+                            <ul class="completed-info">
+                                <li>아이디 : [[${loginId}]]</li>
+                                <li>신청일자 : [[${day}]]</li>
+                            </ul>
+                            <div class="completed-txt">
+                                <p class="txt01">가입하신 기업정보의 내용을 토대로 <br class="hide-pc">내부 검토 후 인증 여부를 알려드립니다.</p>
+                                <p class="txt02">최소 24시간이 소요되며 <br class="hide-pc">최대 72시간안에 인증 확인 알림톡이 발송됩니다.</p>
+                            </div>
+                        </div>
+                        <div class="btn-wrap">
+                            <a href="javascript:;" onclick="goHome()" class="btn color2">스틸링크 서비스 이용하기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script layout:fragment="script" th:inline="javascript">
+    //서브 페이지 제목
+    var hdNm = "회원가입";
+
+    // 스틀링크 서비스 이용하기 버튼클릭
+    function goHome() {
+        let jwtToken = /*[[${token}]]*/'';
+
+        fetch("/api/token/use", {
+            method : "POST",
+            headers : {"Content-Type" : "application/json"},
+            body : JSON.stringify({jwtToken : jwtToken})
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result)
+                location.href = '/';
+            })
+    }
+</script>
+</html>

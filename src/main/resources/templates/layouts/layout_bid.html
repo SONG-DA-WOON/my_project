@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="~{fragments/fragment_head :: head}"></head>
+
+<body>
+<!-- 본문 바로가기 -->
+<div id="skipNav"><a href="#contents" onclick="document.getElementById('contents').tabIndex = -1;document.getElementById('contents').focus();return false;">본문 바로가기</a></div>
+<div id="container">
+
+    <div id="bidLayout" layout:fragment="contents"></div>
+
+</div>
+</body>
+</html>

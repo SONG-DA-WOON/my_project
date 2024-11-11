@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/layout_sub}">
+
+<main id="contents" layout:fragment="contents">
+    <div class="sub-content" style="background-color: #EEF5FF;">
+        <div class="member-wrap">
+            <div class="join-wrap">
+                <div class="w-set">
+                    <div class="tit-area">
+                        <h2 class="tit hide-m">회원가입</h2>
+                        <p class="txt">딱 1분만 입력하시면 가입이 완료됩니다!</p>
+                    </div>
+                    <form action="" id="frmSearch">
+                        <div class="write-area">
+                            <div class="input-wrap">
+                                <div class="input-item">
+                                    <p class="input-tit required">이메일 아이디</p>
+                                    <!-- 중복확인 완료 후 readonly 속성 추가 -->
+                                    <input type="text" name="loginId" id="loginId"
+                                           placeholder="5-20자 이내, 영문 소문자 숫자 사용가능 합니다.">
+                                    <label for="loginId" class="is-blind">이메일 아이디</label>
+                                    <!-- 중복확인 완료 후 is-disabled 클래스 추가 -->
+                                    <button type="button" class="btn" id="checkLoginId" onclick="loginIdCheck()">중복확인</button>
+                                </div>
+                                <div class="input-item">
+                                    <p class="input-tit required">이름</p>
+                                    <input type="text" name="memberName" id="memberName" placeholder="이름을 입력해 주세요.">
+                                    <label for="memberName" class="is-blind">이름</label>
+                                </div>
+                                <div class="input-item">
+                                    <p class="input-tit required">비밀번호</p>
+                                    <input type="password" name="password" id="password" placeholder="영문 대소문자, 숫자, 특수문자 혼용하여 8~12자">
+                                    <label for="password" class="is-blind">비밀번호</label>
+                                </div>
+                                <div class="input-item">
+                                    <p class="input-tit required">비밀번호 확인</p>
+                                    <input type="password" name="passwordCheck" id="passwordCheck" placeholder="동일한 비밀번호를 입력해 주세요.">
+                                    <label for="passwordCheck" class="is-blind">비밀번호 확인</label>
+                                </div>
+                                <div class="input-item">
+                                    <p class="input-tit required">휴대폰 번호</p>
+                                    <div class="add-btn">
+                                        <input type="text" name="phoneNumber" id="phoneNumber" oninput="validateInputs()" placeholder="전화번호를 입력해 주세요.">
+                                        <label for="phoneNumber" class="is-blind">휴대폰 번호</label>
+                                        <button type="button" class="btn" onclick="phoneAuthNumber()">인증번호 받기</button>
+                                    </div>
+
+<!--TODO 알림톡 구현 시 꼭 지우기 -->
+                                    <span id="authNumber_span_tag"></span>
+
+                                    <!-- 인증번호 받기 클릭 후 노출 -->
+                                    <div class="add-btn">
+                                        <input type="text" name="authNumber" id="authNumber" placeholder="인증번호를 입력해 주세요.">
+                                        <label for="authNumber" class="is-blind">인증확인</label>
+                                        <button type="button" class="btn" onclick="checkAuthNum()">인증확인</button>
+<!--                                        <p class="time" >02:59</p>-->
+                                    </div>
+
+
+<!--                                    <p class="error-txt">인증이 완료되었습니다.</p>-->
+                                </div>
+                                <div class="input-item">
+                                    <p class="input-tit required">사업자 등록번호</p>
+                                    <div class="add-btn">
+                                        <!-- 인증 완료 후 readonly 속성 추가 -->
+                                        <input type="text" name="businessNumber" id="businessNumber"
+                                               placeholder="사업자 번호를 입력해 주세요." maxlength="10" oninput="validateInputs()">
+                                        <label for="businessNumber" class="is-blind">사업자 등록번호</label>
+                                        <!-- 인증 완료 후 is-disabled 클래스 추가 -->
+                                        <button type="button" class="btn" onclick="checkBusinessNumber()">인증</button>
+                                    </div>
+                                    <p class="error-txt company_number_txt" style="display: none">
+                                        <span id="company_span_tag" style="display: none">㈜ 여의스틸 / 홍길동</span>
+                                        인증이 완료되었습니다.
+                                    </p>
+                                </div>
+                                <div class="input-item">
+                                    <p class="input-tit">사업자 등록증</p>
+                                    <div class="file-ui">
+                                        <!-- 파일 등록 된 경우 placeholder 클래스 제거 -->
+                                        <div class="file-name placeholder" id="fileTagName">사업자 등록증을 등록해주세요.</div>
+                                        <input type="hidden" name="fileId" id="fileId"/>
+                                        <input type="file" name="attachFile" id="attachFile">
+                                        <label for="attachFile" class="btn">파일 선택</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-wrap">
+                                <div class="sub-tit">
+                                    <span class="required">구매/판매 목록</span>
+                                    <span class="txt">(중복선택가능)</span>
+                                </div>
+                                <div class="wish-wrap">
+                                    <p class="input-tit">판재류</p>
+                                    <div class="wish-list">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="cateA" id="cateA1">
+                                            <label for="cateA1" class="btn color3">전체</label>
+                                        </div>
+                                        <div class="checkbox" th:each="plate, idx : ${thickPlateList}">
+                                            <input type="checkbox" name="plate" th:id="'plate_' + ${idx.count}" th:value="${plate.detailCd}">
+                                            <label th:for="'plate_' + ${idx.count}" class="btn color3" th:text="${plate.detailNm}">HR</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wish-wrap">
+                                    <p class="input-tit">철근류</p>
+                                    <div class="wish-list">
+                                        <div class="checkbox" th:each="rebar, idx : ${rebarList}">
+                                            <input type="checkbox" th:id="'rebar_' + ${idx.count}" name="rebar" th:value="${rebar.detailCd}">
+                                            <label th:for="'rebar_' + ${idx.count}"class="btn color3" th:text="${rebar.detailNm}">철근</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wish-wrap">
+                                    <p class="input-tit">형강류</p>
+                                    <div class="wish-list">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="cateC" id="cateC1">
+                                            <label for="cateC1" class="btn color3">전체</label>
+                                        </div>
+                                        <div class="checkbox" th:each="section, idx : ${sectionsSteelList}">
+                                            <input type="checkbox" name="section" th:id="'section_' + ${idx.count}" th:value="${section.detailCd}">
+                                            <label th:for="'section_' + ${idx.count}" class="btn color3" th:text="${section.detailNm}">H빔</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wish-wrap">
+                                    <p class="input-tit">강관류</p>
+                                    <div class="wish-list">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="cateD" id="cateD1">
+                                            <label for="cateD1" class="btn color3">전체</label>
+                                        </div>
+                                        <div class="checkbox" th:each="pipe , idx : ${steelPipeList}">
+                                            <input type="checkbox" name="pipe" th:id="'pipe_' + ${idx.count}" th:value="${pipe.detailCd}">
+                                            <label th:for="'pipe_' + ${idx.count}" class="btn color3" th:text="${pipe.detailNm}">구조용각관</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-wrap">
+                                <div class="sub-tit">
+                                    <span class="required">구매/판매 지역</span>
+                                    <span class="txt">(중복선택가능)</span>
+                                </div>
+                                <div class="input-item">
+                                    <div class="select-wrap">
+                                        <div class="select-box">
+                                            <button type="button" class="select">선택하세요.</button>
+                                            <ul class="option-list">
+                                                <li th:each="region, idx : ${regionList}">
+                                                    <input type="radio" name="region" th:id="'region' + ${idx.index}" th:value="${region.id}">
+                                                    <label th:for="'region' + ${idx.index}" th:text="${region.regionNm}">서울특별시 강서구</label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-add">추가</button>
+                                </div>
+                                <ul class="location-list">
+<!--                                    <li>-->
+<!--                                        <p class="local">서울특별시 강서구</p>-->
+<!--                                        <button type="button" class="btn-del">삭제</button>-->
+<!--                                    </li>-->
+                                </ul>
+                            </div>
+
+                            <div class="input-wrap">
+                                <div class="sub-tit">
+                                    <span class="required">관심 상품 알림 수신</span>
+                                </div>
+                                <div class="receive-wrap">
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="notification1" value="Y" name="alarmSellYn">
+                                        <label for="notification1">판매글 알림 수신</label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="notification2" value="Y" name="alarmBuyYn">
+                                        <label for="notification2">구매글 알림 수신</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-wrap">
+                                <div class="sub-tit">
+                                    <span class="required">약관동의</span>
+                                </div>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="allCheck">
+                                    <label for="allCheck" class="all">약관 전체 동의</label>
+                                </div>
+                                <div class="terms-list">
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="agreeChk" id="agreeChk_1">
+                                        <label for="agreeChk_1" class="chk">(필수) 만 14세이상 입니다.</label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="agreeChk" id="agreeChk_2">
+                                        <label for="agreeChk_2" class="chk">(필수) 이용약관에 동의합니다.</label>
+                                        <button type="button" class="btn-more" onclick="$popup.template('#termsPopup')">
+                                            보기
+                                        </button>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="agreeChk" id="agreeChk_3">
+                                        <label for="agreeChk_3" class="chk">(필수) 개인정보 활용에 동의합니다.</label>
+                                        <button type="button" class="btn-more" onclick="$popup.template('#termsPopup')">
+                                            보기
+                                        </button>
+                                    </div>
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="agreeChk" id="agreeChk_4">
+                                        <label for="agreeChk_4" class="chk">(선택) 마케팅 수신정보에 동의합니다.</label>
+                                        <button type="button" class="btn-more" onclick="$popup.template('#termsPopup')">
+                                            보기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-wrap type-center">
+                                <button type="button" class="btn color2" id="saveBtn" onclick="saveButton()">회원가입하기</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script layout:fragment="script">
+
+    let processedData = {};
+
+    // 페이지가 로드되면 모든 초기화 함수를 실행합니다.
+    document.addEventListener('DOMContentLoaded', () => {
+        agreeAllCheckBoxes();
+        placeholderUpdate();
+        optionSelection();
+        // '후판류', '형강류', '강관류' 각각에 대해 전체와 개별 체크박스 이벤트 설정
+        setAllCheckboxListener("cateA1", "plate");
+        setIndividualCheckboxListener("cateA1", "plate");
+
+        setAllCheckboxListener("cateC1", "section");
+        setIndividualCheckboxListener("cateC1", "section");
+
+        setAllCheckboxListener("cateD1", "pipe");
+        setIndividualCheckboxListener("cateD1", "pipe");
+    });
+
+    // 체크박스 (구매/판매 목록) 전체
+    function setAllCheckboxListener(allCheckboxId, itemName) {
+        document.getElementById(allCheckboxId).addEventListener("change", function() {
+            const checkboxes = document.querySelectorAll(`input[name=${itemName}]`);
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+    }
+
+    // 체크박스 각각 선택 후 다 선택했을때 전체 체크 되게
+    function setIndividualCheckboxListener(allCheckboxId, itemName) {
+        const checkboxes = document.querySelectorAll(`input[name=${itemName}]`);
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                document.getElementById(allCheckboxId).checked = allChecked;
+            });
+        });
+    }
+
+    // 사업자 번호 숫자만 입력, 10자리 제한
+    function validateInputs() {
+        // 전화번호 유효성 검사
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        phoneNumberInput.value = phoneNumberInput.value.replace(/[^0-9]/g, '');
+        if (phoneNumberInput.value.length > 11) {
+            phoneNumberInput.value = phoneNumberInput.value.slice(0, 11);
+        }
+
+        // 사업자 등록번호 유효성 검사
+        const businessNumberInput = document.getElementById('businessNumber');
+        businessNumberInput.value = businessNumberInput.value.replace(/[^0-9]/g, '');
+        if (businessNumberInput.value.length > 10) {
+            businessNumberInput.value = businessNumberInput.value.slice(0, 10);
+        }
+    }
+
+    // 약관 동의 체크박스 초기화 및 이벤트 처리
+    function agreeAllCheckBoxes() {
+        const providerAll = document.querySelector('#allCheck');
+        const agreeCheckboxes = document.querySelectorAll('input[name="agreeChk"]');
+
+        // 전체 동의 체크박스 상태 업데이트 함수
+        function allCheckboxState() {
+            providerAll.checked = Array.from(agreeCheckboxes).every(checkbox => checkbox.checked);
+        }
+
+        // 전체 동의 체크박스 변경 시 개별 약관 체크박스 상태 변경
+        providerAll.addEventListener('change', () => {
+            agreeCheckboxes.forEach(item => item.checked = providerAll.checked);
+        });
+
+        // 개별 약관 체크박스 변경 시 전체 동의 체크박스 상태 업데이트
+        agreeCheckboxes.forEach(item => {
+            item.addEventListener('change', allCheckboxState);
+        });
+    }
+
+    // 화면 크기에 따른 placeholder 텍스트 업데이트
+    function placeholderUpdate() {
+        function updatePlaceholder() {
+            const placeholderText = window.innerWidth < 769
+                ? '5-20자 이내, 영문, 소문자, 숫자 가능'
+                : '5-20자 이내, 영문, 소문자, 숫자 사용가능 합니다.';
+            document.querySelector('#loginId').setAttribute('placeholder', placeholderText);
+        }
+
+        // 화면 크기 변경 시 placeholder 업데이트
+        window.addEventListener('resize', updatePlaceholder);
+        // 초기 페이지 로드 시 placeholder 설정
+        updatePlaceholder();
+    }
+
+    // 옵션 선택 및 추가 기능 초기화
+    function optionSelection() {
+        const selectButton = document.querySelector('.select');
+        const optionList = document.querySelector('.option-list');
+        const options = optionList.querySelectorAll('li input[type="radio"]');
+        const addButton = document.querySelector('.btn-add');
+        const locationList = document.querySelector('.location-list');
+
+        // 선택된 옵션의 라벨과 값을 저장하는 변수
+        let selectedLabel = '';
+        let selectedValue = '';
+
+        // 드롭다운 토글 함수 (열기/닫기) 구매/판매 지역
+        selectButton.addEventListener('click', () => {
+            optionList.classList.toggle('on');
+        });
+
+        // 드롭다운 닫기 함수 구매/판매 지역
+        document.addEventListener('click', (event) => {
+            if (!selectButton.contains(event.target) && !optionList.contains(event.target)) {
+                optionList.classList.remove('on');
+            }
+        });
+
+        // 선택된 라벨과 값을 업데이트하고 드롭다운 닫기
+        options.forEach(option => {
+            option.addEventListener('change', () => {
+                selectedLabel = option.nextElementSibling.textContent;
+                selectedValue = option.value;
+                selectButton.textContent = selectedLabel;
+                selectButton.classList.add('selected');
+                optionList.classList.remove('on');
+            });
+        });
+
+        addButton.addEventListener('click', () => {
+            if (!selectedLabel) return $popup.alert('지역을 선택해주세요.');
+
+            // 항목이 이미 리스트에 있는지 확인
+            const existingItems = Array.from(locationList.querySelectorAll('.local')).map(p => p.textContent);
+            if (existingItems.includes(selectedLabel)) {
+                $popup.alert('이미 추가된 항목입니다.');
+                selectedLabel = '';
+                selectButton.textContent = '선택하세요.';
+                selectButton.classList.remove('selected');
+                return;
+            }
+
+            const listItem = document.createElement('li');
+            const localParagraph = document.createElement('p');
+            localParagraph.classList.add('local');
+            localParagraph.textContent = `${selectedLabel}`;
+            localParagraph.setAttribute('data-value', selectedValue);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.classList.add('btn-del');
+            deleteButton.textContent = '삭제';
+
+            // 삭제 버튼 클릭 시 항목을 제거하고 복원
+            deleteButton.addEventListener('click', () => {
+                locationList.removeChild(listItem);
+                restoreOptions();
+            });
+
+            listItem.appendChild(localParagraph);
+            listItem.appendChild(deleteButton);
+            locationList.appendChild(listItem);
+
+            removeSelectedOption(selectedLabel);
+            selectedLabel = '';
+            selectButton.textContent = '선택하세요.';
+            selectButton.classList.remove('selected');
+        });
+    }
+
+    // 선택된 옵션을 드롭다운에서 제거하는 함수
+    function removeSelectedOption(label) {
+        const options = document.querySelectorAll('.option-list li input[type="radio"]');
+        options.forEach(option => {
+            if (option.nextElementSibling.textContent === label) {
+                option.parentElement.style.display = 'none';
+            }
+        });
+    }
+
+    // 드롭다운에 복원된 항목을 다시 추가하는 함수
+    function restoreOptions() {
+        const locationList = document.querySelector('.location-list');
+        const addedLabels = Array.from(locationList.querySelectorAll('.local')).map(p => p.textContent);
+        const options = document.querySelectorAll('.option-list li input[type="radio"]');
+        options.forEach(option => {
+            if (!addedLabels.includes(option.nextElementSibling.textContent)) {
+                option.parentElement.style.display = '';
+            }
+        });
+    }
+
+
+    // 아이디 중복 체크 기능 초기화
+    let loginCheck = false;
+    function loginIdCheck() {
+        const checkLoginIdButton = document.getElementById("checkLoginId");
+        const loginId = document.getElementById("loginId");
+        if (!loginId.value.trim()) {
+            return $popup.alert("아이디를 입력해주세요.");
+        }
+
+        // 이메일 정규식
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(loginId.value)) {
+            $popup.alert('올바른 이메일 형식을 입력해 주세요.');
+            return;
+        }
+
+        // 서버에 아이디 중복 체크 요청
+        fetch("/join/id/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ loginId: loginId.value })
+        })
+            .then(res => res.json())
+            .then(result => {
+               if(result.status === 200) {
+                   $popup.alert("사용 가능한 아이디 입니다.")
+                   loginCheck = true;
+                   checkLoginIdButton.classList.add("is-disabled")
+                   loginId.readOnly = true;
+               } else {
+                   console.log(result)
+               }
+            })
+            .catch(error => $popup.alert("중복된 아이디입니다."))
+    }
+
+    // 파일 업로드를 위한 이벤트
+    document.getElementById("attachFile").addEventListener("change", event => {
+        const inputFile = event.currentTarget;
+        uploadFiles(inputFile, "memberJoin");
+        inputFile.value = '';
+    })
+
+    // 파일업로드
+    function uploadFiles(inputFile, source) {
+        if(inputFile.files.length === 0) return;
+
+        const formData = new FormData();
+        if(source != null) formData.append('source', source);
+        Array.prototype.forEach.call(inputFile.files, file => formData.append('files', file));
+
+        fetch("/api/attachment/uploads", {
+            method : "POST",
+            body : formData
+        })
+            .then(response => response.json())
+            .then(result => {
+                if(result.status !== 200) {
+                    throw new Error(result.message)
+                } else {
+                    uploadFilesAfterTrigger(inputFile, result.data);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                $popup.alert(error.message);
+            })
+    }
+
+
+    // 업로드 된 사진 정보 찍기
+    function uploadFilesAfterTrigger(inputFile, data) {
+        const fileTagName = document.getElementById('fileTagName');
+        const fileId = document.getElementById('fileId');
+
+        data.forEach(tag => {
+            const fileName = tag.originalName; // 파일 이름
+            const fileUUID = tag.id;
+
+            // 파일 관련 태그에 데이터 설정
+            fileTagName.textContent = fileName;
+            fileId.value = fileUUID;
+
+            processedData['fileId'] = fileUUID;
+        });
+    }
+    let companyCheck = false;
+    // 사업자 등록번호 인증
+    function checkBusinessNumber() {
+        let businessNumber = document.getElementById("businessNumber");
+        if (businessNumber.value.trim() === "") {
+            $popup.alert("사업자 등록번호를 입력해주세요.");
+            return false;
+        }
+
+        if (businessNumber.value.length !== 10) {
+            $popup.alert('사업자 등록번호는 10자리 숫자여야 합니다.');
+            return;
+        }
+
+        fetch("/api/find/company", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body : JSON.stringify({businessNumber : businessNumber.value})
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result)
+                const errorText = document.querySelector(".company_number_txt");
+                const companyTag = document.getElementById("company_span_tag");
+                if (result.data.code === 200) {
+                    // 인증 성공
+                    companyCheck = true;
+                    const companyName = result.data.data.dataBody.comp_name;
+                    const representativeName = result.data.data.dataBody.representive_name;
+                    companyTag.textContent = `${companyName} / ${representativeName}`;
+                    companyTag.style.display = "inline";
+                    errorText.style.display = "block";
+                    processedData.company = result.data.data.dataBody.comp_name;
+                    processedData.ceo = result.data.data.dataBody.representive_name;
+                    processedData.businessNumber = result.data.data.dataBody.comp_num;
+
+                    $popup.alert(result.data.message);
+                } else {
+                    // 인증 실패
+                    $popup.alert(result.data.message);
+                }
+            })
+    }
+
+
+    window.addEventListener("beforeunload", function () {
+        localStorage.removeItem("lastAuthTime");
+    });
+
+    function phoneAuthNumber() {
+        let phoneNumber = document.getElementById("phoneNumber");
+        let lastSentTime = localStorage.getItem("lastAuthTime");
+        let currentTime = new Date().getTime();
+        const THREE_MINUTES = 3 * 60 * 1000;
+
+        if (phoneNumber.value.trim() === "") {
+            $popup.alert("휴대폰 번호를 입력해주세요.");
+            return false;
+        }
+
+        if (lastSentTime && currentTime - lastSentTime < THREE_MINUTES) {
+            $popup.alert("3분 이내에 발송된 인증번호가 있습니다. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+
+        let authNum = document.getElementById('authNumber_span_tag')
+
+        fetch("/api/phone/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phoneNumber: phoneNumber.value })
+        })
+            .then(res => res.json())
+            .then(result => {
+                if (result.code === 200) {
+                    console.log(result)
+                    localStorage.setItem("lastAuthTime", currentTime);
+                    $popup.alert(result.data.message);
+
+                    authNum.innerText = result.data.data;
+                } else {
+                    $popup.alert(result.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                $popup.alert("인증번호 요청 중 오류가 발생했습니다.");
+            });
+    }
+
+
+
+
+    // 인증번호 확인 클릭
+    function checkAuthNum() {
+        let authNumber = document.getElementById("authNumber");
+
+        if(authNumber.value.trim() === "") {
+            alert("인증번호를 입력해주세요.");
+            return false;
+        }
+
+        fetch("/api/phone/auth/check", {
+            method : "POST",
+            headers : {"Content-Type" : "application/json"},
+            body : JSON.stringify({authNumber : authNumber.value})
+        })
+            .then(res => res.json())
+            .then(result => {
+                if(result.data.code === 200) {
+                    $popup.alert(result.data.message);
+                } else {
+                    $popup.alert(result.data.message);
+                }
+            })
+    }
+
+    // 회원가입 저장 버튼 기능 초기화
+    function saveButton() {
+        // 필수 값 검증 및 레이블 매핑
+        const fieldLabels = {
+            'loginId': '이메일 아이디',
+            'password': '비밀번호',
+            'passwordCheck': '비밀번호 확인',
+            'phoneNumber': '휴대폰 번호',
+            'businessNumber': '사업자 등록번호',
+            'memberName' : '회원 명'
+        };
+
+        if(!loginCheck) {
+            $popup.alert("아이디 중복확인을 해주세요.");
+            return;
+        }
+
+
+        // 필수 값 validation 및 데이터 수집
+        for (let [field, label] of Object.entries(fieldLabels)) {
+            let fieldValue = document.querySelector(`[name=${field}]`).value;
+            if (!fieldValue) {
+                $popup.alert(`${label}은(는) 필수 입력입니다.`);
+                return;
+            }
+            // 비밀번호 유효성 검사
+            if (field === 'password') {
+                const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
+                if (!passwordPattern.test(fieldValue)) {
+                    $popup.alert('비밀번호는 8~12자의 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.');
+                    return;
+                }
+            }
+            processedData[field] = fieldValue;
+        }
+
+        if(!companyCheck) {
+            $popup.alert("사업자 등록번호를 인증해주세요.")
+            return;
+        }
+
+        // 선택된 구매/판매 목록
+        let categories = ['plate', 'rebar', 'section', 'pipe'];
+        let selectedCategories = {};
+        let hasSelected = false;
+
+        for (let name of categories) {
+            let selected = Array.from(document.querySelectorAll(`input[name=${name}]:checked`)).map(cb => cb.value);
+            if (selected.length > 0) {
+                hasSelected = true; // 하나라도 선택되면 true로 변경
+            }
+            selectedCategories[name] = selected; // 각 카테고리의 선택된 값을 배열로 저장
+            processedData[name] = selected.join(',');
+        }
+
+        if (!hasSelected) {
+            $popup.alert(`구매/판매 목록에서 하나 이상의 선택이 필요합니다.`);
+            return;
+        }
+
+        // 모든 카테고리의 선택된 항목을 'categories' 필드로 저장
+        processedData['categories'] = selectedCategories;
+        // 선택된 지역 처리
+        let selectedRegions = Array.from(document.querySelectorAll('.location-list li p')).map(p => p.getAttribute('data-value'));
+        if (selectedRegions.length === 0) {
+            $popup.alert('구매/판매 지역을 하나 이상 선택해야 합니다.');
+            return;
+        }
+        processedData['region'] = selectedRegions.join(',');
+
+        // 관심 상품 알림 수신
+        let checkboxes = ['alarmSellYn', 'alarmBuyYn'];
+        let atLeastOneChecked = false;
+        checkboxes.forEach(name => {
+            let checkbox = document.querySelector(`input[name=${name}]`);
+            if (checkbox.checked) {
+                processedData[name] = 'Y';
+                atLeastOneChecked = true;
+            } else {
+                processedData[name] = 'N';
+            }
+        });
+
+        if (!atLeastOneChecked) {
+            $popup.alert('관심 상품 알림 수신 항목에서 하나 이상 선택해야 합니다.');
+            return;
+        }
+
+        // 약관 동의 체크박스 검증
+        const requiredAgreementCheckboxes = document.querySelectorAll('input[name="agreeChk"]:not(#agreeChk_4)');
+        const allAgreed = Array.from(requiredAgreementCheckboxes).every(checkbox => checkbox.checked);
+        if (!allAgreed) {
+            $popup.alert('필수 약관 동의 항목을 모두 체크해 주세요.');
+            return;
+        }
+
+
+        // 서버로 데이터 전송
+        fetch("/join/save", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify(processedData)
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result)
+                location.href = "/join/complete?token=" + result.data;
+            })
+            .catch(error => {
+                $popup.alert(result.message);
+                console.error('Error:', error);
+            });
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="aside">
+    <div class="aside-bg"></div>
+    <aside id="aside-menu">
+        <div class="aside-header">
+            <div class="aside-center">
+                <span class="title">마이페이지</span>
+            </div>
+            <button type="button" class="aside-close">닫기</button>
+            <div class="member-info">
+                <!-- 로그인 전 -->
+                <th:block sec:authorize="isAnonymous()">
+                    <div class="aside-login">
+                        <p>로그인하고,</p>
+                        <p class="txt">스틸링크에서 쉽고 빠르게 거래하세요.</p>
+                        <div class="btn-wrap type-center">
+                            <a href="/login" class="btn color5">로그인</a>
+                            <a href="/join" class="btn color6">회원가입</a>
+                        </div>
+                    </div>
+                </th:block>
+
+                <!-- 로그인 후 -->
+                <th:block sec:authorize="!isAnonymous()">
+                    <div class="profile-wrap">
+<!--                        기본 이미지-->
+                        <div class="profile" th:if="${#authentication.principal.profileImg == null}">
+                            <img src="/images/common/img/no_profile.svg" alt="기본 프로필">
+                        </div>
+<!--                        등록한 이미지-->
+                        <div class="profile" th:if="${#authentication.principal.profileImg != null}">
+
+                            <img th:src="@{/api/attachment/view/{uuid}(uuid=${#authentication.principal.profileImg}, size=150)}" alt="등록한 프로필">
+                        </div>
+                        <p class="name" th:text="${#authentication.principal.company}">여의스틸<span>님</span></p>
+                    </div>
+                    <div class="point-wrap">
+                        <p>보유POINT</p>
+                        <a href="#" class="point" id="memPoint">15,000<span>P</span></a>
+                    </div>
+                    <div class="btn-wrap type-center">
+                        <button type="button" class="btn color6" onclick="location.href='/logout'">로그아웃</button>
+                        <a href="/mypage/edit" class="btn color6">나의 정보</a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+        <div class="aside-body">
+            <div class="aside-banner">
+                <div class="imgbox">
+                    <img src="../images/common/img/aside_banner.png" alt="신규고객 이벤트, 신규 가입시! 즉시발급 100,000point">
+                </div>
+            </div>
+            <ul class="aside-menu">
+                <!-- 로그인 후 -->
+                <th:block sec:authorize="!isAnonymous()">
+                    <li>
+                        <a href="#">진행 중인 거래<i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="/mypage/progress/buyer">견적문의</a>
+                            </li>
+                            <li>
+                                <a href="/mypage/progress/seller">견적참여</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">완료된 거래<i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="/mypage/completed/buyer">견적문의</a>
+                            </li>
+                            <li>
+                                <a href="/mypage/completed/seller">견적참여</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">프리마켓<i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="/mypage/freeMarket/sale">판매 내역</a>
+                            </li>
+                            <li>
+                                <a href="/mypage/freeMarket/buy">구매 내역</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/mypage/wish">찜 리스트</a>
+                    </li>
+                    <li>
+                        <a href="/mypage/alarm">알림 설정</a>
+                    </li>
+                    <li>
+                        <a href="/mypage/point">포인트</a>
+                    </li>
+                </th:block>
+                <!-- 로그인 전 -->
+                <th:block sec:authorize="isAnonymous()">
+                    <li>
+                        <a href="#">스틸 ON <i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="/steel/price">품목별 실시간 유통가격</a>
+                            </li>
+                            <li>
+                                <a href="/steel/maker">메이커 비규격품 공유</a>
+                            </li>
+                            <li>
+                                <a href="/steel/calculate">철강 계산기</a>
+                            </li>
+                            <li>
+                                <a href="/steel/archive">철강 자료실</a>
+                            </li>
+                            <li>
+                                <a href="/steel/partners">파트너스</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">이용안내 <i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="javascript:void(0)">서비스 소개</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">구매 이용안내</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">판매 이용안내</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">회사소개</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">고객지원 <i class="depth-ico"></i></a>
+                        <ul class="depth2">
+                            <li>
+                                <a href="/steel/notice">공지사항</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">광고신청</a>
+                            </li>
+                        </ul>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </aside>
+</div>
+</html>
