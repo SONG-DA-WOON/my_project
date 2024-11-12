@@ -1,16 +1,15 @@
-package kr.co.steellink.user.domain.member;
+package com.project.domain.member;
 
-import kr.co.steellink.user.domain.member.entity.Member;
-import kr.co.steellink.user.domain.member.enumset.MemberStatus;
+import com.project.domain.member.entity.Member;
+import com.project.domain.member.enumset.MemberStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, QuerydslPredicateExecutor<Member>, MemberRepositoryCustom {
+public interface MemberRepository extends JpaRepository<Member, Long>, QuerydslPredicateExecutor<Member>, kr.co.steellink.user.domain.member.MemberRepositoryCustom {
 
     Member findByLoginId(String username);
 

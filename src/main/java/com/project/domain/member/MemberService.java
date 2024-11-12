@@ -1,40 +1,18 @@
-package kr.co.steellink.user.domain.member;
+package com.project.domain.member;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.domain.member.dto.MemberLoginIdCheckDto;
+import com.project.domain.member.dto.MemberSaveDto;
+import com.project.domain.member.entity.Member;
+import com.project.domain.member.enumset.MemberStatus;
+import com.project.domain.member.enumset.MemberType;
 import kr.co.steellink.user.common.JSONResponse;
 import kr.co.steellink.user.common.YN;
 import kr.co.steellink.user.common.exception.ApiBadRequestException;
-import kr.co.steellink.user.domain.bidset.BidSetRepository;
-import kr.co.steellink.user.domain.bidset.entity.BidSet;
-import kr.co.steellink.user.domain.estimate.dto.EstimateSaveDto;
-import kr.co.steellink.user.domain.estimatecart.EstimateCartRepository;
-import kr.co.steellink.user.domain.estimateset.EstimateSetRepository;
-import kr.co.steellink.user.domain.estimateset.entity.EstimateSet;
-import kr.co.steellink.user.domain.estimateset.enumset.EstimateSetStatus;
-import kr.co.steellink.user.domain.estimatesethistory.EstimateSetHistoryRepository;
-import kr.co.steellink.user.domain.estimatesethistory.entity.EstimateSetHistory;
-import kr.co.steellink.user.domain.member.dto.*;
-import kr.co.steellink.user.domain.member.entity.Member;
-import kr.co.steellink.user.domain.member.enumset.MemberStatus;
-import kr.co.steellink.user.domain.member.enumset.MemberType;
-import kr.co.steellink.user.domain.memberbusinessitem.MemberBusinessItemRepository;
-import kr.co.steellink.user.domain.memberbusinessitem.dto.MemberBusinessItemDto;
-import kr.co.steellink.user.domain.memberbusinessitem.entity.MemberBusinessItem;
-import kr.co.steellink.user.domain.memberbusinessregion.MemberBusinessRegionRepository;
-import kr.co.steellink.user.domain.memberbusinessregion.entity.MemberBusinessRegion;
-import kr.co.steellink.user.domain.membercredentials.MemberCredentialsRepository;
-import kr.co.steellink.user.domain.membercredentials.entity.MemberCredentials;
-import kr.co.steellink.user.domain.memberpoint.MemberPointService;
-import kr.co.steellink.user.domain.memberpointhistory.MemberPointHistoryService;
-import kr.co.steellink.user.domain.tokencheck.TokenCheckRepository;
-import kr.co.steellink.user.domain.tokencheck.entity.TokenCheck;
-import kr.co.steellink.user.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static kr.co.steellink.user.domain.pointsetting.enumset.PointType.MEM_REGISTRATION;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
@@ -301,6 +278,7 @@ public class MemberService {
 
     /**
      * 새로고침 감지
+     *
      * @return
      */
     private boolean isNewRequest() {
@@ -309,6 +287,7 @@ public class MemberService {
 
     /**
      * {@link MemberCredentials 테이블 저장 메소드}
+     *
      * @param authentication
      * @param phoneNumber
      * @param authNumber
@@ -331,6 +310,7 @@ public class MemberService {
 
     /**
      * 회원 정보 가져오기
+     *
      * @param authentication
      * @return
      */
@@ -339,7 +319,6 @@ public class MemberService {
         Member member = memberRepository.findByLoginIdAndSttsCd(authentication.getName(), MemberStatus.NORMAL);  // 인증된 사용자의 정보를 DB에서 조회
         return member != null ? member.getId() : null;
     }
-
 
 
     /**
@@ -534,10 +513,11 @@ public class MemberService {
             // 실제 요청
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                Map<String, Object> resultData = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+                Map<String, Object> resultData = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {
+                });
 
                 Map<String, Object> resultDataBody = (Map<String, Object>) resultData.get("dataBody");
-                if("".equals(resultDataBody.get("comp_name")) && "".equals(resultDataBody.get("representive_name"))) {
+                if ("".equals(resultDataBody.get("comp_name")) && "".equals(resultDataBody.get("representive_name"))) {
                     return new JSONResponse<>(500, "존재하지 않는 사업자 등록번호 입니다.");
                 }
                 return new JSONResponse<>(200, "인증이 완료되었습니다.", resultData);
@@ -799,18 +779,18 @@ public class MemberService {
 
     public JSONResponse<?> validatePassword(String newPassword, String passwordCheck) {
 
-    if (!hasText(newPassword)) {
-        return new JSONResponse<>(400, "비밀번호를 입력해주세요.");
-    }
+        if (!hasText(newPassword)) {
+            return new JSONResponse<>(400, "비밀번호를 입력해주세요.");
+        }
         if (!hasText(passwordCheck)) {
-        return new JSONResponse<>(400, "비밀번호 확인을 입력해주세요.");
-    }
+            return new JSONResponse<>(400, "비밀번호 확인을 입력해주세요.");
+        }
         if (!isValidPassword(newPassword)) {
-        return new JSONResponse<>(400, "비밀번호는 8~12자리로 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
-    }
+            return new JSONResponse<>(400, "비밀번호는 8~12자리로 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.");
+        }
         if (!newPassword.equals(passwordCheck)) {
-        return new JSONResponse<>(400, "비밀번호와 비밀번호 확인이 다릅니다.");
-    }
+            return new JSONResponse<>(400, "비밀번호와 비밀번호 확인이 다릅니다.");
+        }
         return null;
     }
 
@@ -822,7 +802,7 @@ public class MemberService {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-       member.setPwd(passwordEncoder.encode(newPassword));
+        member.setPwd(passwordEncoder.encode(newPassword));
 
         try {
             memberRepository.save(member);

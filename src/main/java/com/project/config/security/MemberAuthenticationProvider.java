@@ -1,6 +1,7 @@
-package com.dmc.config.security;
+package com.project.config.security;
 
-import com.dmc.domain.member.entity.Member;
+
+import com.project.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MemberAuthenticationProvider implements AuthenticationProvider {
 
-    private final MemberDetailsService memberDetailsService;
+    private final com.dmc.config.security.MemberDetailsService memberDetailsService;
     private final PasswordEncoder passwordEncoder;
 
 
