@@ -1,4 +1,4 @@
-package kr.co.steellink.user.domain.deliveryregion.codeGenerator;
+package com.project.domain.deliveryregion.codeGenerator;
 
 import lombok.NoArgsConstructor;
 

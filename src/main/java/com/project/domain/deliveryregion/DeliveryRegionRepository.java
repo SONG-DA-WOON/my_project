@@ -1,17 +1,17 @@
-package kr.co.steellink.user.domain.deliveryregion;
+package com.project.domain.deliveryregion;
 
+
+import com.project.domain.deliveryregion.dto.DeliveryRegionListDto;
 import kr.co.steellink.user.common.YN;
-import kr.co.steellink.user.domain.deliveryregion.entity.DeliveryRegion;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface DeliveryRegionRepository extends
         JpaRepository<DeliveryRegion, Long>, QuerydslPredicateExecutor<DeliveryRegion>,
-        DeliveryRegionRepositoryCustom {
+        kr.co.steellink.user.domain.deliveryregion.DeliveryRegionRepositoryCustom {
 
     List<DeliveryRegion> findByStatus(YN yn);
 

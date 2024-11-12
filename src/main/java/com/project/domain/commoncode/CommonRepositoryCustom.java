@@ -1,6 +1,7 @@
-package kr.co.steellink.user.domain.commoncode;
+package com.project.domain.commoncode;
 
-import kr.co.steellink.user.domain.commoncode.dto.BankInfoDto;
+
+import com.project.domain.commoncode.dto.BankInfoDto;
 
 import java.util.List;
 

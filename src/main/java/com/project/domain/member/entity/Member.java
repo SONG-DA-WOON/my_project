@@ -1,11 +1,8 @@
-package kr.co.steellink.user.domain.member.entity;
+package com.project.domain.member.entity;
 
 import jakarta.persistence.*;
 import kr.co.steellink.user.common.BaseEntity;
 import kr.co.steellink.user.common.YN;
-import kr.co.steellink.user.domain.admin.enumset.MemberRole;
-import kr.co.steellink.user.domain.member.enumset.MemberStatus;
-import kr.co.steellink.user.domain.member.enumset.MemberType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;

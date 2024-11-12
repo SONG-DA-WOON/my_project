@@ -1,4 +1,4 @@
-package kr.co.steellink.user.domain.commoncode.dto;
+package com.project.domain.commoncode.dto;
 
 import lombok.Getter;
 import lombok.Setter;

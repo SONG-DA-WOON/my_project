@@ -1,5 +1,6 @@
-package kr.co.steellink.user.domain.commoncode;
+package com.project.domain.commoncode;
 
+import com.project.domain.commoncode.dto.BankInfoDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

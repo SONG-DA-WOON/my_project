@@ -1,4 +1,4 @@
-package kr.co.steellink.user.domain.deliveryregion.dto;
+package com.project.domain.deliveryregion.dto;
 
 import lombok.Getter;
 import lombok.Setter;

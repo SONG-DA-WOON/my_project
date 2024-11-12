@@ -1,4 +1,4 @@
-package kr.co.steellink.user.web.controller.member;
+package com.project.web.member;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.co.steellink.user.common.ApiResponse;
@@ -45,7 +45,6 @@ public class MemberController {
     private final DeliveryRegionRepository deliveryRegionRepository;
     private final MemberService memberService;
     private final JwtUtils jwtUtils;
-    private final TokenCheckRepository tokenCheckRepository;
 
     /**
      * 회원가입 페이지
@@ -78,7 +77,7 @@ public class MemberController {
      */
     @PostMapping("/join/id/check")
     @ResponseBody
-    public ApiResponse<Boolean> joinIdCheck(@RequestBody MemberLoginIdCheckDto dto) {
+    public ApiResponse<Boolean> joinIdCheck(@RequestBody kr.co.steellink.user.domain.member.dto.MemberLoginIdCheckDto dto) {
 
         return ApiResponse.ok(memberService.checkLoginId(dto));
     }

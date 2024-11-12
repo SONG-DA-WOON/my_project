@@ -1,5 +1,6 @@
-package kr.co.steellink.user.domain.deliveryregion;
+package com.project.domain.deliveryregion;
 
+import com.project.domain.deliveryregion.dto.DeliveryRegionListDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;

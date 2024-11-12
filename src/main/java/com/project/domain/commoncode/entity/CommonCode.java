@@ -1,4 +1,4 @@
-package kr.co.steellink.user.domain.commoncode.entity;
+package com.project.domain.commoncode.entity;
 
 import jakarta.persistence.*;
 import kr.co.steellink.user.common.YN;

@@ -1,4 +1,4 @@
-package kr.co.steellink.user.domain.member.enumset;
+package com.project.domain.member.enumset;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

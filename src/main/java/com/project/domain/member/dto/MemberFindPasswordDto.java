@@ -1,4 +1,4 @@
-package kr.co.steellink.user.domain.member.dto;
+package com.project.domain.member.dto;
 
 import lombok.Data;
 import org.hibernate.annotations.Comment;
