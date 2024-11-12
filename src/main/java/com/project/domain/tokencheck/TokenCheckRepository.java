@@ -1,6 +1,7 @@
 package com.project.domain.tokencheck;
 
-import kr.co.steellink.user.domain.tokencheck.entity.TokenCheck;
+
+import com.project.domain.tokencheck.entity.TokenCheck;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
